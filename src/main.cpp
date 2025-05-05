@@ -7,6 +7,7 @@
 #include <EEPROM.h>
 
 struct PIDParams {
+  uint32_t magic = 0xDEADBEEF;  // уникальный "флаг"
   float Kp = 0;
   float Ki = 0;
   float Kd = 0;
@@ -246,6 +247,11 @@ void setup() {
   motor.setSpeed(DEFAULT_FEEDRATE, 8);
   motor.enable();
   EEPROM.get(0, lastTuneResult);
+  if (lastTuneResult.magic != 0xDEADBEEF) {
+    // EEPROM пустой — загружаем дефолт
+    lastTuneResult = { 0xDEADBEEF, 50.0, 0.3, 200.0 };
+    savePID(lastTuneResult);  // сохранить начальные
+  }
   hotend.setPID(lastTuneResult.Kp, lastTuneResult.Ki, lastTuneResult.Kd);
 }
 
