@@ -432,7 +432,7 @@ void loop() {
     }
     lastClickTime = millis();
 
-    if (clickCount >= 5) {
+    if (clickCount >= 3) {
       hotend.setTargetTemp(0);
       motor.setSpeed(0, 8);
       motor.disable();
