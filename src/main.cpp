@@ -387,19 +387,6 @@ void loop() {
     }
   }
 
-  if (clickCount == 3) {
-    static PIDAutotuner tuner(HOTEND_HEATER, therm);
-    tuningInProgress = true;
-    updateDisplay();  // сразу показать "TUNING..."
-    lastTuneResult = tuner.tune(hotend.getTargetTemp());
-    showTuneResult = true;
-    tuneResultTimer = millis();
-    tuningInProgress = false;
-    hotend.setTargetTemp(0);
-    clickCount = 0;
-    return;
-  }
-
   // Удержание для входа/выхода из редактирования
   if (enc.isHolded() && (millis() - lastDebounceTime > DEBOUNCE_DELAY)) {
     if (selectedField == 2 && !tuningInProgress) {
@@ -423,7 +410,7 @@ void loop() {
     lastDebounceTime = millis();
   }
 
-  // Клик: тройной клик — аварийная остановка
+  // Клик: три клика — аварийная остановка
   if (enc.isClick() && (millis() - lastDebounceTime > DEBOUNCE_DELAY)) {
     if (millis() - lastClickTime < 700) {
       clickCount++;
@@ -432,7 +419,7 @@ void loop() {
     }
     lastClickTime = millis();
 
-    if (clickCount >= 5) {
+    if (clickCount >= 3) {
       hotend.setTargetTemp(0);
       motor.setSpeed(0, 8);
       motor.disable();
